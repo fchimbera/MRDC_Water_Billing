@@ -29,7 +29,6 @@ class UserLoginAPIView(views.APIView):
 # User Profile API View
 class UserProfileAPIView(generics.RetrieveUpdateAPIView):
     serializer_class = UserProfileSerializer
-    permission_classes = [IsAuthenticated]
 
     def get_object(self):
         return self.request.user

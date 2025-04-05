@@ -1,0 +1,23 @@
+{% load static %}
+{% extends "base.html" %}
+{% block content %}
+<h2>User Profile</h2>
+<p>Username: {{ user.username }}</p>
+<p>Email: {{ user.email }}</p>
+<p>Role: {{ user.role }}</p>
+
+<form method="post">
+    {% csrf_token %}
+    <label>New Email:</label>
+    <input type="email" name="email" value="{{ user.email }}" required>
+
+    {% if user.role == "admin" %}
+    <label>Role:</label>
+    <input type="text" name="role" value="{{ user.role }}">
+    {% endif %}
+
+    <button type="submit">Update Profile</button>
+</form>
+<link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+<script src="{% static 'js/script.js' %}"></script>
+{% endblock %}

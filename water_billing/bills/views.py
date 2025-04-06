@@ -17,7 +17,7 @@ class IsMeterReader(BasePermission):
 
 class MeterReadingCreateAPIView(generics.CreateAPIView):
     serializer_class = MeterReadingSerializer
-    #permission_classes = [IsAuthenticated, IsMeterReader] # Only authenticated meter readers can access
+    permission_classes = [IsAuthenticated, IsMeterReader] # Only authenticated meter readers can access
 
     def perform_create(self, serializer):
         serializer.save() # The 'account' will be handled in the serializer's create method
@@ -29,14 +29,14 @@ class MeterReadingCreateAPIView(generics.CreateAPIView):
 
 class UserBillListAPIView(generics.ListAPIView):
     serializer_class = BillSerializer
-    #permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         return Bill.objects.all() #.filter(user=self.request.user)
 
 class UserBillDetailAPIView(generics.RetrieveAPIView):
     serializer_class = BillSerializer
-    #permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
     queryset = Bill.objects.all()  # Important: Start with all Bill objects, then filter in get_object
 
     def get_object(self):

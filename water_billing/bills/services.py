@@ -28,13 +28,13 @@ def calculate_and_create_bill(meter_reading):
     amount_due = consumption * active_rate.rate_per_unit
 
     # Determine billing period (basic example)
-    billing_period_start = previous_reading.reading_date if previous_reading else meter_reading.reading_date - timezone.timedelta(days=30)  # Approximate
+    billing_period_start = previous_reading.reading_date if previous_reading else meter_reading.reading_date - timedelta(days=30)  # Approximate
     billing_period_end = meter_reading.reading_date
-    due_date = billing_period_end + timezone.timedelta(days=15)
+    due_date = billing_period_end + timedelta(days=15)
 
     # Create the bill
     bill = Bill.objects.create(
-        account=account,
+        user=account,  # Changed 'account' to 'user' to match the Bill model
         meter_reading=meter_reading,
         previous_reading_value=previous_reading_value,
         consumption=consumption,

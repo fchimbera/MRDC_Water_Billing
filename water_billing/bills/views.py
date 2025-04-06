@@ -1,5 +1,5 @@
 from rest_framework import generics, permissions, status
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, BasePermission
 from rest_framework.response import Response
 from .models import MeterReading, Bill
 from .serializers import MeterReadingSerializer, BillSerializer
@@ -10,29 +10,33 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
 
+# Custom permission to allow meter readers to create readings
+class IsMeterReader(BasePermission):
+    def has_permission(self, request, view):
+        return request.user.is_authenticated and request.user.role == 'meter_reader' # Assuming you have a 'role' field on your User model
+
 class MeterReadingCreateAPIView(generics.CreateAPIView):
     serializer_class = MeterReadingSerializer
-    permission_classes = [IsAuthenticated]
+    #permission_classes = [IsAuthenticated, IsMeterReader] # Only authenticated meter readers can access
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        serializer.save() # The 'account' will be handled in the serializer's create method
         meter_reading = serializer.instance
         try:
             calculate_and_create_bill(meter_reading)
         except ValueError as e:
-            # Handle billing error, maybe log it
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 class UserBillListAPIView(generics.ListAPIView):
     serializer_class = BillSerializer
-    permission_classes = [IsAuthenticated]
+    #permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return Bill.objects.filter(user=self.request.user)
+        return Bill.objects.all() #.filter(user=self.request.user)
 
 class UserBillDetailAPIView(generics.RetrieveAPIView):
     serializer_class = BillSerializer
-    permission_classes = [IsAuthenticated]
+    #permission_classes = [IsAuthenticated]
     queryset = Bill.objects.all()  # Important: Start with all Bill objects, then filter in get_object
 
     def get_object(self):

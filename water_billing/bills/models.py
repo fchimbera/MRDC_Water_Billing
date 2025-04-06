@@ -23,8 +23,6 @@ class MeterReading(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def save(self, *args, **kwargs):
-        if self.paid_date and not self.is_paid:
-            raise ValueError("paid_date can only be set if is_paid is True.")
         super().save(*args, **kwargs)
     is_billed = models.BooleanField(default=False)  # Indicates if this reading has been billed
     is_active = models.BooleanField(default=True)  # Indicates if the reading is active or not
